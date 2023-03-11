@@ -1,0 +1,8 @@
+package velodyne_plugin_msgs.msgs;
+import "vector3d.proto";
+
+message EchoPositions
+{
+  repeated gazebo.msgs.Vector3d positions = 1;
+  
+}
