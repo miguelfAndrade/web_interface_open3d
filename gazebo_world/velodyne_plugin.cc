@@ -19,9 +19,9 @@
 
 std::string points_coordinates = "";
 
-CURL *curl;
-CURLcode res;
-std::string url = "http://localhost:8080/points";
+// CURL *curl;
+// CURLcode res;
+// std::string url = "http://localhost:8080/points";
 
 void sendPoints(std::string x, std::string y, std::string z);
 
@@ -222,20 +222,19 @@ namespace gazebo
 
 
 void sendPoints(std::string x, std::string y, std::string z) {
-  // std::cout << x << " " << y << " " << z << " " << std::endl;
 
-  // CURL *curl;
-  // CURLcode res;
-  // std::string url = "https://example.com/api";
-  std::string data = "x=" << x << "&y=" << y << "&z=" << z;
+  CURL *curl;
+  CURLcode res;
+  std::string url = "http://localhost:8080/points";
+  std::string data = "x=" + x + "&y=" + y + "&z=" + z;
 
   curl_global_init(CURL_GLOBAL_ALL);
 
   curl = curl_easy_init();
   if (curl)
   {
-      curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-      curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+      std::string url_with_data = url + "?" + data;
+      curl_easy_setopt(curl, CURLOPT_URL, url_with_data.c_str());
       res = curl_easy_perform(curl);
       if (res != CURLE_OK)
       {

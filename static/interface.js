@@ -27,23 +27,15 @@ controls.update();
 controls.enablePan = false;
 controls.enableDamping = true;
 
+scene.add( new THREE.AxesHelper() );
+
 // load a resource
 const loader = new GLTFLoader();
+let model = new THREE.Object3D();
 
-loader.load( 'model', function ( gltf ) {
 
-	const model = gltf.scene;
-	model.rotation.x = -Math.PI/2;
-	scene.add( model );
+animate();
 
-	animate();
-
-	}, undefined, function ( error ) {
-
-		console.error( error );
-
-	} 
-);
 
 window.onresize = function () {
 
@@ -57,11 +49,32 @@ window.onresize = function () {
 
 };
 
+function objLoader() {
+	loader.load( 'model', function ( gltf ) {
+		scene.remove(model);
+		
+		model = gltf.scene;
+		model.rotation.x = -Math.PI/2;
+		scene.add( model );
+	
+		// animate();
+	
+		}, undefined, function ( error ) {
+	
+			console.error( error );
+	
+		} 
+	);
+}
+
 function animate() {
 
 	requestAnimationFrame( animate );
+	
+	objLoader();
 
 	controls.update();
+
 
 	renderer.render( scene, camera );
 

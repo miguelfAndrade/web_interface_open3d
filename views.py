@@ -5,10 +5,20 @@ from flask import Blueprint, render_template, send_file, request, jsonify
 views = Blueprint(__name__, "views")
 filename = "models/ex.gltf"
 
+# For changing the parameters use global variables for save the info
+
+maxChunksPoints = 100
+maxPointsCounter = 0
+pcd = o3d.geometry.PointCloud()
+points = []
+
+# np_points = np.random.rand(100, 3)
+
 # pointCloud = o3d.geometry.pointCloud()
 
 def pointCloudMesh():
-    pcd = o3d.io.read_point_cloud("data/sensor_data.xyz")
+    global pcd
+    # pcd = o3d.io.read_point_cloud("data/sensor_data.xyz")
     # downTmp = pcd.voxel_down_sample(voxel_size=0.1)
     down = pcd.remove_duplicated_points()
     distances = down.compute_nearest_neighbor_distance()
@@ -21,16 +31,16 @@ def pointCloudMesh():
     mesh.paint_uniform_color([0,0,1])
     # o3d.visualization.draw_geometries([mesh])
     # o3d.io.write_triangle_mesh("models/ex.obj", mesh)
-    o3d.io.write_triangle_mesh("models/ex.gltf", mesh)
+    o3d.io.write_triangle_mesh(filename, mesh)
 
 @views.route("/")
 def home():
-    # pointCloudMesh()
+    pointCloudMesh()
     return render_template("index.html")
 
 @views.route("/interface")
 def interface():
-    pointCloudMesh()
+    # pointCloudMesh()
     return render_template("interface.html")
 
 @views.route("/model")
@@ -40,8 +50,38 @@ def profile():
     except Exception as e:
 	    return str(e)
 
-@views.route("/points", methods = ['POST'])
+@views.route("/points", methods = ['POST', 'GET'])
 def get_points():
-    points = request.args
-    return jsonify(points)
+    global maxChunksPoints
+    global maxPointsCounter
+    global pcd
+    global points
+    # global np_points
+
+    # pointTemp = []
+
+    pcdTemp = o3d.geometry.PointCloud()
+
+    args = request.args
+    x = float(args.get('x'))
+    y = float(args.get('y'))
+    z = float(args.get('z'))
+
+    points.append([x, y, z])
+    # print(points)
+
+    maxPointsCounter = maxPointsCounter + 1
+    np_points = np.array(points)
+    # print(np_points)
+
+    
+    if(maxPointsCounter > maxChunksPoints):
+        pcdTemp.points = o3d.utility.Vector3dVector(np_points)
+        pcdClean = pcdTemp.remove_non_finite_points(True, True)
+        pcd = pcdClean.remove_duplicated_points()
+        print(np.asarray(pcdClean.points))
+        pointCloudMesh()
+        maxPointsCounter = 0
+    
+    return args
     
