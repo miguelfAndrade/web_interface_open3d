@@ -4,11 +4,67 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #canvas {
+            margin: auto;
+            border-style: solid;
+            border-radius: 1px;
+            width: 80vw;
+        }
+
+        .optionsContainer {
+            margin: auto;
+            margin-top: 2%;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            padding: 12px 16px;
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        #poissonParams {
+            visibility: hidden;
+        }
+    </style>
     <title>Home</title>
 </head>
 <body>
-    <div id="c"></div>
-    <!-- <button id="myButton" class="float-left submit-button">Generate Mesh</button> -->
+    <div id="canvas"></div>
+    <div class="optionsContainer">
+        <label>Voxel Downsampling </label>
+        <input type="range" min="1" max="100" value="50" class="slider" id="voxelSlider">
+        <div class="dropdown">
+            3D Mesh Generator Method: <select name="method" id="method">
+                <option value="ball" selected="selected">Ball Pivoting</option>
+                <option value="poisson">Poisson</option>
+              </select>
+        </div>
+        <div id="ballParams">
+            point_neighbors <input type="text" min="0" max="10" value="5" class="input" id="poissonScale">
+            point_radius <input type="text" min="0" max="10" value="5" class="input" id="poissonScale">
+        </div>
+        <div id="poissonParams">
+            Poisson Depth <input type="range" min="0" max="10" value="5" class="slider" id="poissonDepth">
+            Poisson Width <input type="range" min="0" max="10" value="5" class="slider" id="PoissonWidth">
+            Poisson Scale <input type="text" min="0" max="10" value="5" class="input" id="poissonScale">
+            Poisson Linear fit <input type="checkbox" class="checkbox" id="poissonLinearFit">
+        </div>
+
+
+      </div>
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
     <script type="importmap">
     {

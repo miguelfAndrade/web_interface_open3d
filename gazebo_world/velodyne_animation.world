@@ -1,0 +1,418 @@
+<sdf version='1.7'>
+  <world name='default'>
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+      <spot>
+        <inner_angle>0</inner_angle>
+        <outer_angle>0</outer_angle>
+        <falloff>0</falloff>
+      </spot>
+    </light>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+    </model>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <wind/>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <state world_name='default'>
+      <sim_time>0 0</sim_time>
+      <real_time>0 0</real_time>
+      <wall_time>1682353765 461202622</wall_time>
+      <iterations>0</iterations>
+      <model name='ground_plane'>
+        <pose>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='velodyne_hdl-32'>
+        <pose>0.067227 0.900602 0 0 0 -0.000467</pose>
+        <scale>1 1 1</scale>
+        <link name='base'>
+          <pose>0.067227 0.900602 0.029335 0 0 -0.000467</pose>
+          <velocity>8.1e-05 0.000174 0.003039 -0.005928 0.002763 0</velocity>
+          <acceleration>0.162188 0.347768 6.07895 0.71027 -0.756624 0</acceleration>
+          <wrench>0.194625 0.417322 7.29474 0 -0 0</wrench>
+        </link>
+        <link name='top'>
+          <pose>0.067227 0.900602 0.095455 0 -0 -1.3084</pose>
+          <velocity>0.000264 0.000566 0.003039 -0.005943 0.00273 -1.28319</velocity>
+          <acceleration>0.527603 1.13169 6.07895 0.695121 -0.789327 0</acceleration>
+          <wrench>0.05276 0.113169 0.607895 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose>0 0 10 0 -0 0</pose>
+      </light>
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>5.85072 -5.84159 7.95138 0 0.831644 2.36419</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+    <audio>
+      <device>default</device>
+    </audio>
+    <model name='velodyne_hdl-32'>
+      <link name='base'>
+        <pose>0 0 0.029335 0 -0 0</pose>
+        <inertial>
+          <mass>1.2</mass>
+          <inertia>
+            <ixx>0.00108747</ixx>
+            <iyy>0.00108747</iyy>
+            <izz>0.00109244</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+        <visual name='base_visual'>
+          <pose>0 0 -0.029335 0 -0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://velodyne_hdl32/meshes/velodyne_base.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <shader type='pixel'/>
+          </material>
+          <transparency>0</transparency>
+          <cast_shadows>1</cast_shadows>
+        </visual>
+        <collision name='base_collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.04267</radius>
+              <length>0.05867</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+      </link>
+      <link name='top'>
+        <pose>0 0 0.095455 0 -0 0</pose>
+        <inertial>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>9.062e-05</ixx>
+            <iyy>9.062e-05</iyy>
+            <izz>9.104e-05</izz>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyz>0</iyz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <sensor name='sensor' type='ray'>
+          <pose>0 0 -0.004645 1.5707 -0 0</pose>
+          <visualize>1</visualize>
+          <update_rate>30</update_rate>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>32</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.535292</min_angle>
+                <max_angle>0.186227</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>1</samples>
+                <min_angle>0</min_angle>
+                <max_angle>0</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.05</min>
+              <max>70</max>
+              <resolution>0.02</resolution>
+            </range>
+          </ray>
+        </sensor>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+        <gravity>0</gravity>
+        <visual name='top_visual'>
+          <pose>0 0 -0.037679 0 -0 1.5707</pose>
+          <geometry>
+            <mesh>
+              <uri>model://velodyne_hdl32/meshes/velodyne_top.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <shader type='pixel'>
+              <normal_map>__default__</normal_map>
+            </shader>
+          </material>
+          <pose>0 0 0 0 -0 0</pose>
+          <transparency>0</transparency>
+          <cast_shadows>1</cast_shadows>
+        </visual>
+        <collision name='top_collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.04267</radius>
+              <length>0.07357</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+      </link>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <joint name='joint' type='revolute'>
+        <pose>0 0 -0.036785 0 -0 0</pose>
+        <parent>base</parent>
+        <child>top</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+          <limit>
+            <lower>-1e+16</lower>
+            <upper>1e+16</upper>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <plugin name='velodyne_plugin' filename='libvelodyne_plugin.so'>
+        <velocity>5</velocity>
+      </plugin>
+      <pose>-0.004752 0.615015 0 0 -0 0</pose>
+    </model>
+    <joint type='revolute' name='joint'>
+      <pose>0 0 -0.036785 0 0 0</pose>
+      <parent>base</parent>
+      <child>top</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-10000000000000000</lower>
+          <upper>10000000000000000</upper>
+        </limit>
+      </axis>
+    </joint>
+    <actor name="animated_box">
+        <link name="box_link">
+         <visual name="visual">
+            <geometry>
+               <mesh>
+               <uri>model://cafe/meshes/cafe.dae</uri>
+               </mesh>
+            </geometry>
+         </visual>
+          <!-- <visual name="visual">
+            <geometry>
+               <box>
+                  <size>.2 .2 .2</size>
+               </box>
+            </geometry>
+          </visual> -->
+        </link>
+        <script>
+          <loop>true</loop>
+          <auto_start>true</auto_start>
+          <trajectory id="0" type="square">
+             <waypoint>
+                <time>0.0</time>
+                <pose>0 0 -0.25 0 0 0</pose>
+             </waypoint>
+             <waypoint>
+                <time>1.0</time>
+                <pose>0 10 -0.25 0 0 0</pose>
+             </waypoint>
+             <waypoint>
+                <time>2.0</time>
+                <pose>0 0 -0.25 0 0 0</pose>
+             </waypoint>
+             <!-- <waypoint>
+                <time>3.0</time>
+                <pose>1 -1 -0.5 0 0 0</pose>
+             </waypoint>
+             <waypoint>
+                <time>4.0</time>
+                <pose>-1 -1 -0.5 0 0 0</pose>
+             </waypoint> -->
+          </trajectory>
+        </script>
+      </actor>
+  </world>
+</sdf>

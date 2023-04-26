@@ -2,12 +2,18 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-const container = document.querySelector('#c');
+const container = document.querySelector('#canvas');
 const windowSizePercentage = 0.8;
+let viewportWidth = window.innerWidth*windowSizePercentage;
+let viewportHeight = window.innerHeight*windowSizePercentage;
+
+let voxelSlider = document.getElementById('voxelSlider');
+let method = document.getElementById('method');
+let divPoissonParams = document.getElementById('poissonParams');
 
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth*windowSizePercentage, window.innerHeight*windowSizePercentage );
+renderer.setSize( viewportWidth, viewportHeight );
 renderer.outputEncoding = THREE.sRGBEncoding;
 container.appendChild( renderer.domElement );
 
@@ -19,7 +25,8 @@ const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 camera.position.z = 3;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color( 0xbfe3dd );
+// scene.background = new THREE.Color( 0xbfe3dd );
+scene.background = new THREE.Color( 0xe2e2e2 );
 
 const controls = new OrbitControls( camera, renderer.domElement );
 controls.target.set( 0, 0, 0 );
@@ -75,7 +82,54 @@ function animate() {
 
 	controls.update();
 
-
 	renderer.render( scene, camera );
 
 }
+
+voxelSlider.oninput = function() {
+	try {
+		sendParametersData(method.value, this.value, 7);
+	}
+	catch (error) {
+		console.error( error );
+	}
+};
+
+
+method.oninput = function () {
+	if(this.value == 'poisson') {
+		divPoissonParams.style.visibility = 'visible';
+	}
+	else {
+		divPoissonParams.style.visibility = 'hidden';
+	}
+	console.log(voxelSlider.value);
+	try {
+		sendParametersData(this.value, voxelSlider.value, 7);
+	}
+	catch (error) {
+		console.error( error );
+	}
+}
+
+async function sendParametersData(method, voxValue, defValue) {
+	fetch("/parameters", {
+	  method: "POST",
+	  body: JSON.stringify({
+		method: method,
+		voxelValue: voxValue,
+		point_neighbors: 0,
+		point_radius: 0.1,
+		poisson_depth: 5,
+		poisson_width: 0,
+		poisson_scale: 1.1,
+		poisson_linear_fit: false
+	  }),
+	  headers: {
+		"Content-type": "application/json; charset=UTF-8"
+	  }
+	})
+	  .then((response) => response.json())
+	  .then((json) => console.log(json));
+}
+

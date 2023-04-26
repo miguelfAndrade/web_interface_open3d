@@ -8,6 +8,10 @@
 #include <ctype.h>
 #include <math.h>
 
+#include <ignition/math/Quaternion.hh>
+#include <ignition/math/Vector3.hh>
+#include <curl/curl.h>
+
 
 // Gazebo's API has changed between major releases. These changes are
 // accounted for with #if..#endif blocks in this file.
@@ -17,250 +21,111 @@
 #include <gazebo/gazebo_client.hh>
 #endif
 
-using namespace std;
+// using namespace std;
+using namespace gazebo;
 
-#define PI 3.14159265
-#define N 3
 
-struct Quaternion {
-    double w, x, y, z;
-};
+void sendPoints(std::string x, std::string y, std::string z);
 
-struct EulerAngles {
-    double roll, pitch, yaw;
-};
-
-void multiplyVector(double mat1[][N], double mat2[N], double res[N]);
-EulerAngles ToEulerAngles(Quaternion q);
-
-string body_tags = ""; //all repeated tags are added in this global string variable
-string points_coordinates = "";
-
-int counter = 0;
+std::string points_coordinates = "";
 
 void cb(ConstLaserScanStampedPtr &_msg)
 {
-    counter += 1;
-    int i = 0;
-
-    string xmlheader = "<?xml version=\"1.0\" enconding=\"utf-8\"?>\n<data>\n"; //xml tag header and data tag
-    string xml_final_tag = "</data>"; //xml end data tag
-    
     gazebo::msgs::LaserScan scan = _msg->scan();
     gazebo::msgs::Pose world_data = scan.world_pose();
     gazebo::msgs::Vector3d position = world_data.position();
-    gazebo::msgs::Quaternion orientation = world_data.orientation();
     
-    int ray_total_count = scan.count();
-
-    string x_pos_tag = "\t\t\t\t<x>" + to_string(position.x()) + "</x>\n";
-    string y_pos_tag = "\t\t\t\t<y>" + to_string(position.y()) + "</y>\n";
-    string z_pos_tag = "\t\t\t\t<z>" + to_string(position.z()) + "</z>\n";
-
-    string x_rot_tag = "\t\t\t\t<x>" + to_string(orientation.x()) + "</x>\n";
-    string y_rot_tag = "\t\t\t\t<y>" + to_string(orientation.y()) + "</y>\n";
-    string z_rot_tag = "\t\t\t\t<z>" + to_string(orientation.z()) + "</z>\n";
-    string w_rot_tag = "\t\t\t\t<w>" + to_string(orientation.w()) + "</w>\n";
-
-    string pos_tag = "\t\t\t<position>\n" + x_pos_tag + y_pos_tag + z_pos_tag + "\t\t\t</position>\n";
-    string orientation_tag = "\t\t\t<orientation>\n" + x_rot_tag + y_rot_tag + z_rot_tag + w_rot_tag + "\t\t\t</orientation>\n";
-
-    string world_pose_tag = "\t\t<world_pose>\n" + pos_tag + orientation_tag +"\t\t</world_pose>\n";
-
-    string angle_min_tag = "\t\t<angle_min>" + to_string(scan.angle_min()) + "</angle_min>\n";
-    string angle_max_tag = "\t\t<angle_max>" + to_string(scan.angle_max()) + "</angle_max>\n";
-    string angle_step_tag = "\t\t<angle_step>" + to_string(scan.angle_step()) + "</angle_step>\n";
-    string range_min_tag = "\t\t<range_min>" + to_string(scan.range_min()) + "</range_min>\n";
-    string range_max_tag = "\t\t<range_max>" + to_string(scan.range_max()) + "</range_max>\n";
-    string count_tag = "\t\t<count>" + to_string(ray_total_count) + "</count>\n";
-    string vertical_angle_min_tag = "\t\t<vertical_angle_min>" + to_string(scan.vertical_angle_min()) + "</vertical_angle_min>\n";
-    string vertical_angle_max_tag = "\t\t<vertical_angle_max>" + to_string(scan.vertical_angle_max()) + "</vertical_angle_max>\n";
-    string vertical_angle_step_tag = "\t\t<vertical_angle_step>" + to_string(scan.vertical_angle_step()) + "</vertical_angle_step>\n";
-    string vertical_count_tag = "\t\t<vertical_count>" + to_string(scan.vertical_count()) + "</vertical_count>\n";
-
-    string angle_max_min_tags = angle_min_tag + angle_max_tag + angle_step_tag + range_min_tag + range_max_tag + count_tag + vertical_angle_min_tag + vertical_angle_max_tag + vertical_angle_step_tag + vertical_count_tag;
-
-    string ranges_tags = "";
-    string intensities_tags = "";
-
-
-    double min_angle = scan.angle_min();
-    double step_angle = scan.angle_step();
-
-    double q0 = orientation.w();
-    double q1 = orientation.x();
-    double q2 = orientation.y();
-    double q3 = orientation.z();
-
-    double m11 = 2*((q0*q0) + (q1*q1))-1;
-    double m12 = 2*((q1*q2) - (q0*q3));
-    double m13 = 2*((q1*q3) + (q0*q2));
-    double m21 = 2*((q1*q2) + (q0*q3));
-    double m22 = 2*((q0*q0) + (q2*q2))-1;
-    double m23 = 2*((q2*q3) - (q0*q1));
-    double m31 = 2*((q1*q3) - (q0*q2));
-    double m32 = 2*((q2*q3) + (q0*q1));
-    double m33 = 2*((q0*q0) + (q3*q3))-1;
+    //Laser scanner orientation from reference frame (in quaternions)
+    gazebo::msgs::Quaternion laser_orientation_ = world_data.orientation();
+    ignition::math::Quaternion<double> laser_orientation =  ignition::math::Quaternion(laser_orientation_.w(), laser_orientation_.x(), laser_orientation_.y(), laser_orientation_.z());
     
-
-    // if(scan.angle_min() < 0)
-    // {
-    //     min_angle = (PI/2) + abs(scan.angle_min());
-    // }
-    // else
-    // {
-    //     min_angle = (PI/2) - scan.angle_min();
-    // }
-
-    double R[N][N] = { { m11, m12, m13 },
-                       { m21, m22, m23 },
-                       { m31, m32, m33 }};
-
-    // double angle = 2*acos(orientation.w());
-    // double vertical_angle = orientation.z()/sin(angle/2);
-    
-    // if(orientation.w() == 1.0)
-    // {
-    //     angle = 0;
-    //     vertical_angle = 0;
-    // }
-
-    // cos_a  = W;
-    // sin_a  = sqrt( 1.0 - cos_a * cos_a );
-    // angle  = acos( cos_a ) * 2;
-    // if ( fabs( sin_angle ) < 0.0005 ) sin_a = 1;
-    // tx = X / sin_a;
-    // ty = Y / sin_a;
-    // tz = Z / sin_a;
-    // latitude = -asin( ty );
-    // if ( tx * tx + tz * tz < 0.0005 )
-    //   longitude   = 0;
-    // else
-    //    longitude  = atan2( tx, tz );
-    // if ( longitude < 0 )
-    //   longitude += 360.0;
-    double angle = 0;
-
-    while(i<ray_total_count)
-    {
-        ranges_tags += "\t\t<ranges>" + to_string(scan.ranges(i)) + "</ranges>\n";
-        intensities_tags += "\t\t<intensities>" + to_string(scan.intensities(i)) + "</intensities>\n";
-
-        // double x1 = scan.ranges(i)*sin(min_angle)*cos(0);
-        // double y1 = scan.ranges(i)*sin(min_angle)*sin(0);
-        // double z1 = scan.ranges(i)*cos(min_angle);
-
-        double x1 = scan.ranges(i)*cos(min_angle);
-        double y1 = 0;
-        double z1 = scan.ranges(i)*sin(min_angle);
-
-        double v[N]={x1,y1,z1};
-
-        double res[N];
-
-
-        Quaternion qq;
-        qq.w = orientation.w();
-        qq.x = orientation.x();
-        qq.y = orientation.y();
-        qq.z = orientation.z();
-        
-        EulerAngles z_angle = ToEulerAngles(qq);
-
-        double RZ[N][N] = { { cos(angle), -sin(angle), 0 },
-                            { sin(angle), cos(angle), 0 },
-                            { 0, 0, 1 }};
-
-        multiplyVector(RZ, v, res);
-
-        // double x = res[0] + position.x();
-        // double y = res[1] + position.y();
-        // double z = res[2] + position.z();
-
-        double x = position.x();
-        double y = position.y();
-        double z = position.z();
-        
-        points_coordinates += to_string(x) + "\t" + to_string(y) + "\t" + to_string(z) + "\n";
-        min_angle += step_angle;
-        cout << "X: " + to_string(x1) + ";   Y: " + to_string(y1) + ";   Z: " + to_string(z1) + "; \n";
-
-        i += 1;
+    //get quaternion for each ray (assuming a single vertical column of rays) @sensor frame
+    std::vector<ignition::math::Quaternion<double>> ray_quat;
+    ignition::math::Quaternion<double> q;
+    double pitchangle = scan.angle_min();
+    for(unsigned int i=0;i<scan.ranges_size();i++){
+        //Set the quaternion from Euler angles; the order of operations is roll, pitch, yaw
+        //The rays are attached to the joint, and its axis points along the x direction; 
+        //rays rotation along the normal axis (y) corresponds to pitch angle
+        q =  ignition::math::Quaternion<double>::EulerToQuaternion(0, -pitchangle,0);
+//std::cout << "pitch angle = " << pitchangle << std::endl;
+//std::cout << "quaternion: w=" << q.W() << " x=" << q.X() << " y=" << q.Y() << " z=" << q.Z() << std::endl;
+        ray_quat.push_back(q);
+        pitchangle += scan.angle_step();
     }
     
-    angle += step_angle;
-
-    string point_tag = "\t<point>\n" + world_pose_tag + angle_max_min_tags + ranges_tags + intensities_tags + "\t</point>\n";
+    //convert quaternions to world frame
+    for(unsigned int i=0;i<ray_quat.size();i++){
+        ray_quat[i] =  ray_quat[i]*laser_orientation;
+    }    
     
-    body_tags += point_tag;
+    //std::cout << std::endl;
+                
+    //calculate echo positions: rotate vector in sensor frame (module equal to range)
+    //std::vector<ignition::math::Vector3<double>> positions;
+    // velodyne_plugin_msgs::msgs::EchoPositions posmsg;
+    for(unsigned int i=0;i<ray_quat.size();i++){
+        ignition::math::Vector3<double> pos(scan.ranges(i),0,0);
+//std::cout << "(before rotation) echo location: x=" << pos.X() << " y=" << pos.Y() << " z=" << pos.Z() << std::endl;
+//std::cout << "quaternion: w=" << ray_quat[i].W() << " x=" << ray_quat[i].X() << " y=" << ray_quat[i].Y() << " z=" << ray_quat[i].Z() << std::endl;
+        pos = ray_quat[i].RotateVector(pos);
+        //positions.push_back(pos);
+        gazebo::msgs::Vector3d pos_;
+        pos_.set_x(pos.X()+position.x());
+        pos_.set_y(pos.Y()+position.y());
+        pos_.set_z(pos.Z()+position.z());
+        // gazebo::msgs::Vector3d* posptr = posmsg.add_positions();
+        // *posptr = pos_;
+//std::cout << "(after rotation)  echo location: x=" << pos.X() << " y=" << pos.Y() << " z=" << pos.Z() << std::endl;
+//std::cout << "echo location: x=" << pos.X()+position.x() << " y=" << pos.Y()+position.y() << " z=" << pos.Z()+position.z() << std::endl;
 
-    ofstream file;
-    // file.open("../sensor_data/sensor_data.xml", fstream::app);
-    file.open("../sensor_data/sensor_data.xml"); //open is the method of ofstream
-    file << xmlheader + body_tags + xml_final_tag;
-    file.close();
+        std::string st_x = std::to_string(pos.X()+position.x());
+        std::string st_y = std::to_string(pos.Y()+position.y());
+        std::string st_z = std::to_string(pos.Z()+position.z());
+        // string cmp = "-nan";
+        // if(st_x != cmp)
+        // {
+        //   points_coordinates += st_x + "\t" + st_y + "\t" + st_z + "\n";
+        // }
 
-    ofstream pointCloud;
-    // pointCloud.open("../sensor_data/sensor_data.xml", fstream::app);
+        points_coordinates += st_x + "\t" + st_y + "\t" + st_z + "\n";
+        sendPoints(st_x, st_y, st_z);
+    }
+
+    //std::cout << points_coordinates;
+    std::ofstream pointCloud;
     pointCloud.open("../sensor_data/sensor_data.xyz"); //open is the method of ofstream
     pointCloud << points_coordinates;
     pointCloud.close();
-
-    Quaternion q;
-    q.w = orientation.w();
-    q.x = orientation.x();
-    q.y = orientation.y();
-    q.z = orientation.z();
-    EulerAngles angles = ToEulerAngles(q);
-
-    // cout << "Roll: " + to_string(angles.roll) + "; Pitch: " + to_string(angles.pitch) + "; Yaw: " + to_string(angles.yaw) + "; \n";
-
+    
+    //velodyne_plugin_msgs::msgs::EchoPositions posmsg;
+    //posmsg.positions = positions;
 }
 
-// Multiplication of matrices
-// void multiply(double mat1[][N], double mat2[N][], double res[N][])
-// {
-//     int i, j, k;
-//     for (i = 0; i < N; i++) {
-//         for (j = 0; j < N; j++) {
-//             res[i][j] = 0;
-//             for (k = 0; k < N; k++)
-//                 res[i][j] += mat1[i][k] * mat2[k][j];
-//         }
-//     }
-// }
+void sendPoints(std::string x, std::string y, std::string z) {
 
-void multiplyVector(double mat1[][N], double mat2[N], double res[N])
-{
-    int i, j;
-    for (int i=0;i<N;i++){
-        for (int j=0;j<N;j++){
-            res[i]+=(mat1[i][j]*mat2[j]);
-        }
-    }
-}
+  CURL *curl;
+  CURLcode res;
+  std::string url = "http://localhost:8080/points";
+  std::string data = "x=" + x + "&y=" + y + "&z=" + z;
 
-EulerAngles ToEulerAngles(Quaternion q) {
-    EulerAngles angles;
+  curl_global_init(CURL_GLOBAL_ALL);
 
-    // roll (x-axis rotation)
-    double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
-    double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
-    angles.roll = std::atan2(sinr_cosp, cosr_cosp);
+  curl = curl_easy_init();
+  if (curl)
+  {
+      std::string url_with_data = url + "?" + data;
+      curl_easy_setopt(curl, CURLOPT_URL, url_with_data.c_str());
+      res = curl_easy_perform(curl);
+      if (res != CURLE_OK)
+      {
+          std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+      }
+      curl_easy_cleanup(curl);
+  }
 
-    // pitch (y-axis rotation)
-    double sinp = 2 * (q.w * q.y - q.z * q.x);
-    if (std::abs(sinp) >= 1)
-        angles.pitch = std::copysign(M_PI / 2, sinp); // use 90 degrees if out of range
-    else
-        angles.pitch = std::asin(sinp);
+  curl_global_cleanup();
 
-    // yaw (z-axis rotation)
-    double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
-    double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
-    angles.yaw = std::atan2(siny_cosp, cosy_cosp);
-
-    return angles;
 }
 
 /////////////////////////////////////////////////
