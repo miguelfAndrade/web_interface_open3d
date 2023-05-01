@@ -363,7 +363,7 @@
           </dynamics>
         </axis>
       </joint>
-      <plugin name='velodyne_plugin' filename='/home/miguel/universidade/gazebo_velodyne/plugins/velodyne/build/libvelodyne_plugin.so'>
+      <plugin name='velodyne_plugin' filename='libvelodyne_plugin.so'>
         <velocity>5</velocity>
       </plugin>
       <pose>-0.004752 0.615015 0 0 -0 0</pose>
