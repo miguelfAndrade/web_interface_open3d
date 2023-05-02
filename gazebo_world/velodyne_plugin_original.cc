@@ -19,11 +19,8 @@
 
 std::string points_coordinates = "";
 
-// CURL *curl;
-// CURLcode res;
-// std::string url = "http://localhost:8080/points";
-
-void sendPoints(std::string x, std::string y, std::string z);
+void sendPoints(std::string data);
+static size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata);
 
 namespace gazebo
 {
@@ -117,78 +114,85 @@ namespace gazebo
     /// \param[in] _msg Repurpose a vector3 message. This function will
     /// only use the x component.
     private: void OnRanges(ConstLaserScanStampedPtr &_msg)
-    {
-     
-        gazebo::msgs::LaserScan scan = _msg->scan();
-        gazebo::msgs::Pose world_data = scan.world_pose();
-        gazebo::msgs::Vector3d position = world_data.position();
+    {    
+      std::string json_data = "[";
+
+      gazebo::msgs::LaserScan scan = _msg->scan();
+      gazebo::msgs::Pose world_data = scan.world_pose();
+      gazebo::msgs::Vector3d position = world_data.position();
+      
+      //Laser scanner orientation from reference frame (in quaternions)
+      gazebo::msgs::Quaternion laser_orientation_ = world_data.orientation();
+      ignition::math::Quaternion<double> laser_orientation =  ignition::math::Quaternion(laser_orientation_.w(), laser_orientation_.x(), laser_orientation_.y(), laser_orientation_.z());
+      
+      //get quaternion for each ray (assuming a single vertical column of rays) @sensor frame
+      std::vector<ignition::math::Quaternion<double>> ray_quat;
+      ignition::math::Quaternion<double> q;
+      double pitchangle = scan.angle_min();
+
+      for(unsigned int i=0;i<scan.ranges_size();i++) {
+        //Set the quaternion from Euler angles; the order of operations is roll, pitch, yaw
+        //The rays are attached to the joint, and its axis points along the x direction; 
+        //rays rotation along the normal axis (y) corresponds to pitch angle
+        q =  ignition::math::Quaternion<double>::EulerToQuaternion(0, -pitchangle,0);
+        //std::cout << "pitch angle = " << pitchangle << std::endl;
+        //std::cout << "quaternion: w=" << q.W() << " x=" << q.X() << " y=" << q.Y() << " z=" << q.Z() << std::endl;
+        ray_quat.push_back(q);
+        pitchangle += scan.angle_step();
+      }
         
-        //Laser scanner orientation from reference frame (in quaternions)
-        gazebo::msgs::Quaternion laser_orientation_ = world_data.orientation();
-        ignition::math::Quaternion<double> laser_orientation =  ignition::math::Quaternion(laser_orientation_.w(), laser_orientation_.x(), laser_orientation_.y(), laser_orientation_.z());
-        
-        //get quaternion for each ray (assuming a single vertical column of rays) @sensor frame
-        std::vector<ignition::math::Quaternion<double>> ray_quat;
-        ignition::math::Quaternion<double> q;
-        double pitchangle = scan.angle_min();
-        for(unsigned int i=0;i<scan.ranges_size();i++){
-            //Set the quaternion from Euler angles; the order of operations is roll, pitch, yaw
-            //The rays are attached to the joint, and its axis points along the x direction; 
-            //rays rotation along the normal axis (y) corresponds to pitch angle
-            q =  ignition::math::Quaternion<double>::EulerToQuaternion(0, -pitchangle,0);
-//std::cout << "pitch angle = " << pitchangle << std::endl;
-//std::cout << "quaternion: w=" << q.W() << " x=" << q.X() << " y=" << q.Y() << " z=" << q.Z() << std::endl;
-            ray_quat.push_back(q);
-            pitchangle += scan.angle_step();
+      //convert quaternions to world frame
+      for(unsigned int i=0;i<ray_quat.size();i++) {
+        ray_quat[i] =  ray_quat[i]*laser_orientation;
+      }    
+      
+      //std::cout << std::endl;
+                  
+      //calculate echo positions: rotate vector in sensor frame (module equal to range)
+      //std::vector<ignition::math::Vector3<double>> positions;
+      velodyne_plugin_msgs::msgs::EchoPositions posmsg;
+
+      for(unsigned int i=0;i<ray_quat.size();i++) {
+        ignition::math::Vector3<double> pos(scan.ranges(i),0,0);
+        //std::cout << "(before rotation) echo location: x=" << pos.X() << " y=" << pos.Y() << " z=" << pos.Z() << std::endl;
+        //std::cout << "quaternion: w=" << ray_quat[i].W() << " x=" << ray_quat[i].X() << " y=" << ray_quat[i].Y() << " z=" << ray_quat[i].Z() << std::endl;
+        pos = ray_quat[i].RotateVector(pos);
+        //positions.push_back(pos);
+        gazebo::msgs::Vector3d pos_;
+        pos_.set_x(pos.X()+position.x());
+        pos_.set_y(pos.Y()+position.y());
+        pos_.set_z(pos.Z()+position.z());
+        gazebo::msgs::Vector3d* posptr = posmsg.add_positions();
+        *posptr = pos_;
+        //std::cout << "(after rotation)  echo location: x=" << pos.X() << " y=" << pos.Y() << " z=" << pos.Z() << std::endl;
+        //std::cout << "echo location: x=" << pos.X()+position.x() << " y=" << pos.Y()+position.y() << " z=" << pos.Z()+position.z() << std::endl;
+
+        std::string st_x = std::to_string(pos.X()+position.x());
+        std::string st_y = std::to_string(pos.Y()+position.y());
+        std::string st_z = std::to_string(pos.Z()+position.z());
+
+        points_coordinates += st_x + "\t" + st_y + "\t" + st_z + "\n";
+
+        json_data += "{\"x\": " + st_x + ", \"y\": " + st_y + ", \"z\": " + st_z + "},";
+        if(i == ray_quat.size()-1) {
+          json_data += "{\"x\": " + st_x + ", \"y\": " + st_y + ", \"z\": " + st_z + "}";
         }
-        
-        //convert quaternions to world frame
-        for(unsigned int i=0;i<ray_quat.size();i++){
-            ray_quat[i] =  ray_quat[i]*laser_orientation;
-        }    
-        
-        //std::cout << std::endl;
-                    
-        //calculate echo positions: rotate vector in sensor frame (module equal to range)
-        //std::vector<ignition::math::Vector3<double>> positions;
-        velodyne_plugin_msgs::msgs::EchoPositions posmsg;
-        for(unsigned int i=0;i<ray_quat.size();i++){
-            ignition::math::Vector3<double> pos(scan.ranges(i),0,0);
-//std::cout << "(before rotation) echo location: x=" << pos.X() << " y=" << pos.Y() << " z=" << pos.Z() << std::endl;
-//std::cout << "quaternion: w=" << ray_quat[i].W() << " x=" << ray_quat[i].X() << " y=" << ray_quat[i].Y() << " z=" << ray_quat[i].Z() << std::endl;
-            pos = ray_quat[i].RotateVector(pos);
-            //positions.push_back(pos);
-            gazebo::msgs::Vector3d pos_;
-            pos_.set_x(pos.X()+position.x());
-            pos_.set_y(pos.Y()+position.y());
-            pos_.set_z(pos.Z()+position.z());
-            gazebo::msgs::Vector3d* posptr = posmsg.add_positions();
-            *posptr = pos_;
-//std::cout << "(after rotation)  echo location: x=" << pos.X() << " y=" << pos.Y() << " z=" << pos.Z() << std::endl;
-//std::cout << "echo location: x=" << pos.X()+position.x() << " y=" << pos.Y()+position.y() << " z=" << pos.Z()+position.z() << std::endl;
+        // sendPoints(st_x, st_y, st_z);
+      }
 
-            std::string st_x = std::to_string(pos.X()+position.x());
-            std::string st_y = std::to_string(pos.Y()+position.y());
-            std::string st_z = std::to_string(pos.Z()+position.z());
-            // string cmp = "-nan";
-            // if(st_x != cmp)
-            // {
-            //   points_coordinates += st_x + "\t" + st_y + "\t" + st_z + "\n";
-            // }
 
-          points_coordinates += st_x + "\t" + st_y + "\t" + st_z + "\n";
-          sendPoints(st_x, st_y, st_z);
-        }
+      //std::cout << points_coordinates;
+      std::ofstream pointCloud;
+      pointCloud.open("../sensor_data/sensor_data.xyz"); //open is the method of ofstream
+      pointCloud << points_coordinates;
+      pointCloud.close();
+      
+      //velodyne_plugin_msgs::msgs::EchoPositions posmsg;
+      //posmsg.positions = positions;
+      pub->Publish(posmsg);
 
-        //std::cout << points_coordinates;
-        std::ofstream pointCloud;
-        pointCloud.open("../sensor_data/sensor_data.xyz"); //open is the method of ofstream
-        pointCloud << points_coordinates;
-        pointCloud.close();
-        
-        //velodyne_plugin_msgs::msgs::EchoPositions posmsg;
-        //posmsg.positions = positions;
-        pub->Publish(posmsg);
+      json_data += "]";
+      sendPoints(json_data);
     }
 
 
@@ -220,29 +224,50 @@ namespace gazebo
 }
 #endif
 
+void sendPoints(std::string data) {
 
-void sendPoints(std::string x, std::string y, std::string z) {
-
-  CURL *curl;
-  CURLcode res;
-  std::string url = "http://localhost:8080/points";
-  std::string data = "x=" + x + "&y=" + y + "&z=" + z;
-
+  // Initialize libcurl
   curl_global_init(CURL_GLOBAL_ALL);
 
-  curl = curl_easy_init();
-  if (curl)
-  {
-      std::string url_with_data = url + "?" + data;
-      curl_easy_setopt(curl, CURLOPT_URL, url_with_data.c_str());
-      res = curl_easy_perform(curl);
-      if (res != CURLE_OK)
-      {
-          std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
-      }
-      curl_easy_cleanup(curl);
+  // Create a new curl handle
+  CURL* curl = curl_easy_init();
+
+  // Set the URL to send the request to
+  std::string url = "http://localhost:8080/points";
+
+  // Set the request headers
+  struct curl_slist* headers = nullptr;
+  headers = curl_slist_append(headers, "Content-Type: application/json");
+
+  // Set the options for the request
+  curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+  curl_easy_setopt(curl, CURLOPT_POST, 1L);
+  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+  curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, data.size());
+  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+  // Set the callback function to receive the response data
+  std::string response_data;
+  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
+
+  // Perform the request and check for errors
+  CURLcode res = curl_easy_perform(curl);
+  if (res != CURLE_OK) {
+      std::cerr << "Error performing request: " << curl_easy_strerror(res) << std::endl;
   }
 
+  // Clean up
+  curl_easy_cleanup(curl);
+  curl_slist_free_all(headers);
   curl_global_cleanup();
 
+  // Print the response data
+  std::cout << "Response: " << response_data << std::endl;
+}
+
+static size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata) {
+    std::string* response = reinterpret_cast<std::string*>(userdata);
+    response->append(ptr, size * nmemb);
+    return size * nmemb;
 }

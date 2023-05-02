@@ -68,14 +68,14 @@ container.appendChild( renderer.domElement );
 
 const fov = 75;
 const aspect = 2; 
-const near = 0.1;
-const far = 50;
+const near = 0.01;
+const far = 500;
 const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 camera.position.z = 3;
 
 const scene = new THREE.Scene();
 // scene.background = new THREE.Color( 0xbfe3dd );
-scene.background = new THREE.Color( 0xe2e2e2 );
+scene.background = new THREE.Color( 0xf0f8ff );
 
 // const material = new THREE.MeshBasicMaterial({color: 0x4283E5});
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);

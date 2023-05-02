@@ -7,7 +7,7 @@ filename = "models/ex.gltf"
 
 # For changing the parameters use global variables for save the info
 
-maxChunksPoints = 100
+maxChunksPoints = 96
 maxPointsCounter = 0
 pcd = o3d.geometry.PointCloud()
 points = []
@@ -51,7 +51,7 @@ def pointCloudMesh():
         mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(down, alpha)
     
     mesh.compute_vertex_normals()
-    mesh.paint_uniform_color([0,0,1])
+    mesh.paint_uniform_color([0.85,0.24,0.28])
     # o3d.visualization.draw_geometries([mesh])
     # o3d.io.write_triangle_mesh("models/ex.obj", mesh)
     o3d.io.write_triangle_mesh(filename, mesh)
@@ -86,17 +86,21 @@ def get_points():
 
     pcdTemp = o3d.geometry.PointCloud()
 
-    args = request.args
-    x = float(args.get('x'))
-    y = float(args.get('y'))
-    z = float(args.get('z'))
+    
+    args = request.json
 
-    points.append([x, y, z])
-    # print(points)
+    for p in args:
+        print(p)
+        x = float(p.get('x'))
+        y = float(p.get('y'))
+        z = float(p.get('z'))
 
-    maxPointsCounter = maxPointsCounter + 1
-    np_points = np.array(points)
-    # print(np_points)
+        points.append([x, y, z])
+        # print(points)
+
+        maxPointsCounter = maxPointsCounter + 1
+        np_points = np.array(points)
+        # print(np_points)
 
     
     if(maxPointsCounter > maxChunksPoints):
@@ -106,6 +110,7 @@ def get_points():
         # print(np.asarray(pcdClean.points))
         pointCloudMesh()
         maxPointsCounter = 0
+
     
     return args
     
