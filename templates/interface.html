@@ -16,7 +16,6 @@
             margin: auto;
             padding: auto;
             margin-top: 1%;
-            /* padding-left: 25%; */
             width: 80vw;
         }
 
@@ -44,11 +43,8 @@
             margin-left: 2%;
         }
 
-        #poissonParams {
-            visibility: hidden;
-        }
-        #alphaParams {
-            visibility: hidden;
+        #sendConfig {
+            margin-top: 2%;
         }
 
     </style>
@@ -67,7 +63,7 @@
                 <option value="poisson">Poisson</option>
               </select>
         </div>
-        <div class="params" id="kdTreeParams">
+        <div id="kdTreeParams">
             <span class="span">Max Neighbors</span>
             <input type="range" min="1" max="50" value="30" class="slider" id="pointNeighborsValue">
             <span id="pointNeighborsLabel"></span>

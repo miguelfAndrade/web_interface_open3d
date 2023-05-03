@@ -58,6 +58,10 @@ window.onload = function() {
 	pointNeighborsLabel.innerHTML = pointNeighbors;
 	pointRadiusLabel.innerHTML = pointRadius;
 	poissonDepthLabel.innerHTML = poissonDepth;
+
+
+	divPoissonParams.style.visibility = 'hidden';
+	divAlphaParams.style.display = 'none';
 }
 
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -146,16 +150,18 @@ function animate() {
 methodDropdown.oninput = function () {
 	switch (this.value) {
 		case 'poisson':
+			divPoissonParams.style.display = 'inherit';
 			divPoissonParams.style.visibility = 'visible';
-			divAlphaParams.style.visibility = 'hidden';
+			divAlphaParams.style.display = 'none';
 			break;
 		case 'alpha':
-			divPoissonParams.style.visibility = 'hidden';
-			divAlphaParams.style.visibility = 'visible';
+			divPoissonParams.style.display = 'none';
+			divAlphaParams.style.display = 'inherit';
 			break;
 		case 'ball':
+			divPoissonParams.style.display = 'inherit';
 			divPoissonParams.style.visibility = 'hidden';
-			divAlphaParams.style.visibility = 'hidden';
+			divAlphaParams.style.display = 'none';
 			break;
 		default:
 			break;
