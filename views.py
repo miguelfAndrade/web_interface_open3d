@@ -17,10 +17,10 @@ method = 'ball'
 point_neighbors = 30
 point_radius = 0.1
 poisson_depth = 5
-# poisson_width = 0
-# poisson_scale = 1.1
-poisson_linear_fit = False
+# poisson_linear_fit = False
 alpha = 0.3
+min_radius = 0.05
+max_radius = 1
 
 # np_points = np.random.rand(100, 3)
 
@@ -30,8 +30,12 @@ def pointCloudMesh():
     global pcd
     global method
     global voxelDownsampling
-    global poisson_linear_fit
+    # global poisson_linear_fit
     global alpha
+    global point_radius
+    global point_neighbors
+    global min_radius
+    global max_radius
 
     if(not np.any(np.asarray(pcd.points))):
         return
@@ -40,13 +44,16 @@ def pointCloudMesh():
     down.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=point_radius, max_nn=point_neighbors))
     
     if(method == 'ball'):
-        distances = down.compute_nearest_neighbor_distance()
-        avg_dist = np.mean(distances)
-        radius = 3 * avg_dist
-        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(down,o3d.utility.DoubleVector([radius, radius * 2]))
+        # distances = down.compute_nearest_neighbor_distance()
+        # avg_dist = np.mean(distances)
+        # radius = 3 * avg_dist
+        # radius = [3*avg_dis, 2*3*avg_dist]
+        radius = [min_radius, max_radius]
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(down,o3d.utility.DoubleVector(radius))
     elif(method == 'poisson'):
         # down.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
-        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(down, depth=poisson_depth, width=0, scale=1.1, linear_fit=poisson_linear_fit)[0]
+        # mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(down, depth=poisson_depth, width=0, scale=1.1, linear_fit=poisson_linear_fit)[0]
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(down, depth=poisson_depth)[0]
     elif(method == 'alpha'):
         mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(down, alpha)
     
@@ -118,23 +125,23 @@ def get_points():
 def get_param():
     global method
     global alpha
-    global poisson_linear_fit
+    # global poisson_linear_fit
     global point_neighbors
     global point_radius
     global poisson_depth
-    # global poisson_width
-    # global poisson_scale
+    global min_radius
+    global max_radius
   
-    if(request.json.get("poissonLinearFit") == 'true'): poisson_linear_fit = True 
-    else: poisson_linear_fit = False 
+    # if(request.json.get("poissonLinearFit") == 'true'): poisson_linear_fit = True 
+    # else: poisson_linear_fit = False 
 
     method = request.json.get("method")
     alpha = float(request.json.get("alpha"))
     point_neighbors = int(request.json.get("pointNeighbors"))
     point_radius = float(request.json.get("pointRadius"))
     poisson_depth = int(request.json.get("poissonDepth"))
-    # poisson_width = request.json.get("poissonWidth")
-    # poisson_scale = request.json.get("poissonScale")
+    max_radius = float(request.json.get("maxRadius"))
+    min_radius = float(request.json.get("minRadius"))
     
     pointCloudMesh()
     return request.json

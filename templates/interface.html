@@ -46,6 +46,9 @@
         #sendConfig {
             margin-top: 2%;
         }
+        .params {
+            display: none;
+        }
 
     </style>
     <title>Home</title>
@@ -71,6 +74,14 @@
             <input type="range" min="1" max="10" value="1" class="slider" id="pointRadiusValue">
             <span id="pointRadiusLabel"></span>
         </div>
+        <div class="params" id="ballParams">
+            <span class="span">Minimum Radius</span>
+            <input type="range" min="1" max="50" value="5" class="slider" id="minRadius">
+            <span id="minRadiusLabel"></span>
+            <span class="span">Maximum Radius</span>
+            <input type="range" min="50" max="100" value="75" class="slider" id="maxRadius">
+            <span id="maxRadiusLabel"></span>
+        </div>
         <div class="params" id="alphaParams">
             <span class="span">Alpha Value</span>
             <input type="range" min="1" max="100" value="30" class="slider" id="alphaValue">
@@ -82,8 +93,8 @@
             <span id="poissonDepthLabel"></span>
             <!-- Poisson Width <input type="range" min="1" max="10" value="5" class="slider" id="poissonWidth"><span id="poissonWidthLabel"></span> -->
             <!-- Poisson Scale <input type="range" min="1" max="10" value="5" class="slider" id="poissonScale"><span id="poissonScaleLabel"></span> -->
-            <span class="span">Poisson Linear fit</span>
-            <input type="checkbox" class="checkbox" id="poissonLinearFit">
+            <!-- <span class="span">Poisson Linear fit</span> -->
+            <!-- <input type="checkbox" class="checkbox" id="poissonLinearFit"> -->
         </div>
         <button id="sendConfig">Send Configurations</button>
     </div>

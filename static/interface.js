@@ -11,12 +11,15 @@ let sendConfigButton = document.getElementById('sendConfig');
 
 let divPoissonParams = document.getElementById('poissonParams');
 let divAlphaParams = document.getElementById('alphaParams');
+let divBallParams = document.getElementById('ballParams');
 
 let alphaValueLabel = document.getElementById('alphaLabel');
 let voxelLabel = document.getElementById('voxelLabel');
 let pointNeighborsLabel = document.getElementById('pointNeighborsLabel');
 let pointRadiusLabel = document.getElementById('pointRadiusLabel');
 let poissonDepthLabel = document.getElementById('poissonDepthLabel');
+let minRadiusLabel = document.getElementById('minRadiusLabel');
+let maxRadiusLabel = document.getElementById('maxRadiusLabel');
 // let poissonWidthLabel = document.getElementById('poissonWidthLabel');
 // let poissonScaleLabel = document.getElementById('poissonScaleLabel');
 
@@ -26,9 +29,11 @@ let alphaValue = document.getElementById('alphaValue');
 let poissonDepthValue = document.getElementById('poissonDepth');
 // let poissonWidthValue = document.getElementById('poissonWidth');
 // let poissonScaleValue = document.getElementById('poissonScale');
-let poissonLinearFitValue = document.getElementById('poissonLinearFit');
+// let poissonLinearFitValue = document.getElementById('poissonLinearFit');
 let pointNeighborsValue = document.getElementById('pointNeighborsValue');
 let pointRadiusValue = document.getElementById('pointRadiusValue');
+let minRadiusValue = document.getElementById('minRadius');
+let maxRadiusValue = document.getElementById('maxRadius');
 
 let methodType;
 let voxelDownsampling;
@@ -37,8 +42,10 @@ let pointRadius;
 let poissonDepth;
 let poissonWidth;
 let poissonScale;
-let poissonLinearFit;
+// let poissonLinearFit;
 let alpha;
+let minRadius;
+let maxRadius;
 
 window.onload = function() {
 	
@@ -49,8 +56,10 @@ window.onload = function() {
 	poissonDepth = poissonDepthValue.value;
 	poissonWidth = 0;
 	poissonScale = 0;
-	poissonLinearFit = poissonLinearFitValue.checked.toString();
+	// poissonLinearFit = poissonLinearFitValue.checked.toString();
 	alpha = alphaValue.value/100;
+	minRadius = minRadiusValue.value/100;
+	maxRadius = maxRadiusValue.value/100;
 	
 	
 	alphaValueLabel.innerHTML = alpha;
@@ -58,10 +67,13 @@ window.onload = function() {
 	pointNeighborsLabel.innerHTML = pointNeighbors;
 	pointRadiusLabel.innerHTML = pointRadius;
 	poissonDepthLabel.innerHTML = poissonDepth;
+	maxRadiusLabel.innerHTML = maxRadius;
+	minRadiusLabel.innerHTML = minRadius;
 
 
-	divPoissonParams.style.visibility = 'hidden';
+	divPoissonParams.style.display = 'none';
 	divAlphaParams.style.display = 'none';
+	divBallParams.style.display = 'inherit';
 }
 
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -151,17 +163,18 @@ methodDropdown.oninput = function () {
 	switch (this.value) {
 		case 'poisson':
 			divPoissonParams.style.display = 'inherit';
-			divPoissonParams.style.visibility = 'visible';
 			divAlphaParams.style.display = 'none';
+			divBallParams.style.display = 'none';
 			break;
 		case 'alpha':
 			divPoissonParams.style.display = 'none';
 			divAlphaParams.style.display = 'inherit';
+			divBallParams.style.display = 'none';
 			break;
 		case 'ball':
-			divPoissonParams.style.display = 'inherit';
-			divPoissonParams.style.visibility = 'hidden';
+			divPoissonParams.style.display = 'none';
 			divAlphaParams.style.display = 'none';
+			divBallParams.style.display = 'inherit';
 			break;
 		default:
 			break;
@@ -194,11 +207,19 @@ poissonDepthValue.oninput = function() {
 	poissonDepth = this.value;
 }
 
-poissonLinearFitValue.oninput = function() {
-	poissonLinearFit = this.checked.toString();
+// poissonLinearFitValue.oninput = function() {
+// 	poissonLinearFit = this.checked.toString();
+// }
+
+maxRadiusValue.oninput = function() {
+	maxRadiusLabel.innerHTML = this.value/100;
+	maxRadius = this.value/100;
 }
 
-
+minRadiusValue.oninput = function() {
+	minRadiusLabel.innerHTML = this.value/100;
+	minRadius = this.value/100;
+}
 
 sendConfigButton.onclick = function() {
 	try {
@@ -220,8 +241,9 @@ async function sendParametersData() {
 		poissonDepth: poissonDepth,
 		poissonWidth: poissonWidth,
 		poissonScale: poissonScale,
-		poissonLinearFit: poissonLinearFit,
-		alpha: alpha
+		alpha: alpha,
+		minRadius: minRadius,
+		maxRadius: maxRadius
 	  }),
 	  headers: {
 		"Content-type": "application/json; charset=UTF-8"
