@@ -1,4 +1,6 @@
 cd build
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:~/velodyne_plugin/build
-gazebo --verbose ../velodyne_2.world
-# gazebo --verbose ../velodyne_animation.world
+gazebo --verbose ../worlds/cafe.world
+# gazebo --verbose ../worlds/gas_station.world
+# gazebo --verbose ../worlds/schools.world
+# gazebo --verbose ../worlds/willow_garage.world

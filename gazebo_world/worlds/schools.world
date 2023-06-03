@@ -87,10 +87,10 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <state world_name='default'>
-      <sim_time>354 435000000</sim_time>
-      <real_time>355 226072973</real_time>
-      <wall_time>1671030797 283390390</wall_time>
-      <iterations>351750</iterations>
+      <sim_time>525 744000000</sim_time>
+      <real_time>32 318358534</real_time>
+      <wall_time>1685800688 844042114</wall_time>
+      <iterations>31375</iterations>
       <model name='ground_plane'>
         <pose>0 0 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -101,30 +101,80 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='unit_box'>
-        <pose>2.9361 0.839216 0.5 0 -0 0</pose>
+      <model name='playground'>
+        <pose>0.69672 2.03143 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>2.9361 0.839216 0.5 0 -0 0</pose>
+          <pose>0.69672 2.03143 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.004709 -9.78112 9.78158 0.712677 -0.009414 -4.3e-05</acceleration>
-          <wrench>-0.004709 -9.78112 9.78158 0 -0 0</wrench>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='playground_clone'>
+        <pose>-0.712148 -20.7966 0 0 -0 3.14159</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>-0.712148 -20.7966 0 0 -0 3.14159</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='school'>
+        <pose>0.306438 15.8702 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>0.306438 15.8702 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='school_clone'>
+        <pose>27.3733 -11.5432 0 0 0 -1.57423</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>27.3733 -11.5432 0 0 0 -1.57423</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='school_clone_0'>
+        <pose>-0.411482 -34.4187 0 0 0 -3.14159</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>-0.411482 -34.4187 0 0 0 -3.14159</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='school_clone_clone'>
+        <pose>-27.4623 -11.6154 0 0 -0 1.55425</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>-27.4623 -11.6154 0 0 -0 1.55425</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='velodyne_hdl-32'>
-        <pose>0.067227 0.900603 -1e-06 3e-06 5e-06 -0</pose>
+        <pose>0.05623 -10.0322 -0 0 0 -0.002523</pose>
         <scale>1 1 1</scale>
         <link name='base'>
-          <pose>0.067227 0.900602 0.029334 3e-06 5e-06 -0</pose>
-          <velocity>0.000156 -9.3e-05 -0.000674 0.003177 0.005324 0</velocity>
-          <acceleration>-0 -0 -9.04615 0 -5e-06 0</acceleration>
-          <wrench>-0 -0 -10.8554 0 -0 0</wrench>
+          <pose>0.05623 -10.0322 0.029335 0 0 -0.002523</pose>
+          <velocity>2e-06 1.3e-05 -0.000489 -0.000427 7.8e-05 0</velocity>
+          <acceleration>1e-06 -0 -9.04615 -2.4e-05 -0.000138 -0</acceleration>
+          <wrench>1e-06 -0 -10.8554 0 -0 0</wrench>
         </link>
         <link name='top'>
-          <pose>0.067227 0.900602 0.095454 3e-06 5e-06 -0</pose>
-          <velocity>0.000508 -0.000303 -0.000674 0.003177 0.005324 0</velocity>
-          <acceleration>1e-06 0 -9.04616 0 -1.1e-05 0</acceleration>
-          <wrench>0 0 -0.904616 0 -0 0</wrench>
+          <pose>0.05623 -10.0322 0.095455 0 -0 2.02391</pose>
+          <velocity>7e-06 4.1e-05 -0.000489 -0.000427 7.8e-05 -1.28319</velocity>
+          <acceleration>-8e-06 2e-06 -9.04615 0.000406 0.002251 0</acceleration>
+          <wrench>-1e-06 0 -0.904615 0 -0 0</wrench>
         </link>
       </model>
       <light name='sun'>
@@ -133,7 +183,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>-0.122848 -6.46733 4.47962 0 0.399643 1.63219</pose>
+        <pose>-47.7655 -66.3157 85.8776 0 0.875595 0.910134</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -363,31 +413,19 @@
           </dynamics>
         </axis>
       </joint>
-      <plugin name='velodyne_plugin' filename='/home/miguel/universidade/gazebo_velodyne/plugins/velodyne/build/libvelodyne_plugin.so'>
-        <velocity>5</velocity>
+      <plugin name='velodyne_plugin' filename='libvelodyne_plugin.so'>
+        <velocity>1.5</velocity>
       </plugin>
       <pose>-0.004752 0.615015 0 0 -0 0</pose>
     </model>
-    <model name='unit_box'>
-      <pose>2.9361 0.839216 0.5 0 -0 0</pose>
+    <model name='playground'>
+      <static>1</static>
       <link name='link'>
-        <inertial>
-          <mass>1</mass>
-          <inertia>
-            <ixx>0.166667</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0.166667</iyy>
-            <iyz>0</iyz>
-            <izz>0.166667</izz>
-          </inertia>
-          <pose>0 0 0 0 -0 0</pose>
-        </inertial>
         <collision name='collision'>
           <geometry>
-            <box>
-              <size>1 1 1</size>
-            </box>
+            <mesh>
+              <uri>model://playground/meshes/playground.dae</uri>
+            </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
           <surface>
@@ -405,21 +443,196 @@
         </collision>
         <visual name='visual'>
           <geometry>
-            <box>
-              <size>1 1 1</size>
-            </box>
+            <mesh>
+              <uri>model://playground/meshes/playground.dae</uri>
+            </mesh>
           </geometry>
-          <material>
-            <script>
-              <name>Gazebo/Grey</name>
-              <uri>file://media/materials/scripts/gazebo.material</uri>
-            </script>
-          </material>
         </visual>
         <self_collide>0</self_collide>
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
+      <pose>0.69672 2.03143 0 0 -0 0</pose>
+    </model>
+    <model name='school'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://school/meshes/school.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://school/meshes/school.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>0.306438 15.8702 0 0 -0 0</pose>
+    </model>
+    <model name='school_clone'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://school/meshes/school.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://school/meshes/school.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>27.3733 -11.5432 0 0 -0 0</pose>
+    </model>
+    <model name='school_clone_clone'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://school/meshes/school.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://school/meshes/school.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>-22.3667 -11.8684 0 0 0 -1.57423</pose>
+    </model>
+    <model name='school_clone_0'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://school/meshes/school.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://school/meshes/school.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>-0.411482 -34.4187 0 0 -0 0</pose>
+    </model>
+    <model name='playground_clone'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://playground/meshes/playground.dae</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://playground/meshes/playground.dae</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>-0.712148 -20.7966 0 0 -0 0</pose>
     </model>
     <joint type='revolute' name='joint'>
       <pose>0 0 -0.036785 0 0 0</pose>
