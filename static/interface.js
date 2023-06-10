@@ -79,7 +79,6 @@ window.onload = function() {
 const renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( viewportWidth, viewportHeight );
-renderer.outputEncoding = THREE.sRGBEncoding;
 container.appendChild( renderer.domElement );
 
 const fov = 75;
@@ -131,14 +130,7 @@ function objLoader() {
 		
 		model = gltf.scene;
 		model.rotation.x = -Math.PI/2;
-		// model.material = material;
-		// console.log(model);
-		// let mesh = new THREE.Mesh(model, material);
-		// model = mesh;
-		scene.add( model );
-	
-		// animate();
-	
+		scene.add( model );	
 		}, undefined, function ( error ) {
 	
 			console.error( error );
@@ -207,9 +199,6 @@ poissonDepthValue.oninput = function() {
 	poissonDepth = this.value;
 }
 
-// poissonLinearFitValue.oninput = function() {
-// 	poissonLinearFit = this.checked.toString();
-// }
 
 maxRadiusValue.oninput = function() {
 	maxRadiusLabel.innerHTML = this.value/100;
@@ -229,6 +218,7 @@ sendConfigButton.onclick = function() {
 		console.error( error );
 	}
 }
+
 
 async function sendParametersData() {
 	fetch("/parameters", {
@@ -252,5 +242,3 @@ async function sendParametersData() {
 	  .then((response) => response.json())
 	  .then((json) => console.log(json));
 }
-
-

@@ -1,5 +1,6 @@
 import open3d as o3d;
 import numpy as np
+import math
 from flask import Blueprint, render_template, send_file, request, jsonify
 
 views = Blueprint(__name__, "views")
@@ -76,12 +77,13 @@ def interface():
 
 @views.route("/model")
 def profile():    
+    global filename
     try:
         return send_file(filename, as_attachment=False)
     except Exception as e:
 	    return str(e)
 
-@views.route("/points", methods = ['POST', 'GET'])
+@views.route("/points", methods = ['POST'])
 def get_points():
     global maxChunksPoints
     global maxPointsCounter
@@ -121,7 +123,7 @@ def get_points():
     
     return args
     
-@views.route("/parameters", methods = ['POST', 'GET'])
+@views.route("/parameters", methods = ['POST'])
 def get_param():
     global method
     global alpha
@@ -145,3 +147,19 @@ def get_param():
     
     pointCloudMesh()
     return request.json
+
+
+@views.route("/downmodel")
+def down_model():
+    global filename
+    global method
+    pathFileObj = "models/geometry-" + method + ".obj"
+    gltfMesh = o3d.io.read_triangle_mesh(filename)
+    rotated_mesh = gltfMesh
+    R = gltfMesh.get_rotation_matrix_from_xyz((-math.pi/2, 0, 0))
+    rotated_mesh.rotate(R, center=(0,0,0))
+    o3d.io.write_triangle_mesh(pathFileObj, rotated_mesh)
+    try:
+        return send_file(pathFileObj, as_attachment=True)
+    except Exception as e:
+	    return str(e)
