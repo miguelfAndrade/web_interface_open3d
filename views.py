@@ -40,8 +40,8 @@ def pointCloudMesh():
 
     if(not np.any(np.asarray(pcd.points))):
         return
-    downTmp = pcd.remove_duplicated_points()
-    down = downTmp.voxel_down_sample(voxel_size=voxelDownsampling)
+    # downTmp = pcd.remove_duplicated_points()
+    down = pcd.voxel_down_sample(voxel_size=voxelDownsampling)
     down.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=point_radius, max_nn=point_neighbors))
     
     if(method == 'ball'):
@@ -62,6 +62,7 @@ def pointCloudMesh():
     mesh.paint_uniform_color([0.85,0.24,0.28])
     # o3d.visualization.draw_geometries([mesh])
     # o3d.io.write_triangle_mesh("models/ex.obj", mesh)
+    o3d.io.write_point_cloud("models/teste.xyz", down)
     o3d.io.write_triangle_mesh(filename, mesh)
 
 @views.route("/")
@@ -111,14 +112,20 @@ def get_points():
         np_points = np.array(points)
         # print(np_points)
 
-    
-    if(maxPointsCounter > maxChunksPoints):
-        pcdTemp.points = o3d.utility.Vector3dVector(np_points)
-        pcdClean = pcdTemp.remove_non_finite_points(True, True)
-        pcd = pcdClean.remove_duplicated_points()
-        # print(np.asarray(pcdClean.points))
-        pointCloudMesh()
-        maxPointsCounter = 0
+    pcdTemp.points = o3d.utility.Vector3dVector(np_points)
+    # pcdClean = pcdTemp.remove_non_finite_points(True, True)
+    pcd = pcdTemp.remove_duplicated_points()
+    # pcd = pcdClean
+    # print(np.asarray(pcdClean.points))
+    pointCloudMesh()
+    # if(maxPointsCounter > maxChunksPoints):
+    #     pcdTemp.points = o3d.utility.Vector3dVector(np_points)
+    #     # pcdClean = pcdTemp.remove_non_finite_points(True, True)
+    #     pcd = pcdTemp.remove_duplicated_points()
+    #     # pcd = pcdClean
+    #     # print(np.asarray(pcdClean.points))
+    #     pointCloudMesh()
+    #     maxPointsCounter = 0
 
     
     return args
