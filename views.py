@@ -22,6 +22,7 @@ poisson_depth = 5
 alpha = 0.3
 min_radius = 0.05
 max_radius = 1
+poisson_scale = 1.1
 
 # np_points = np.random.rand(100, 3)
 
@@ -37,11 +38,13 @@ def pointCloudMesh():
     global point_neighbors
     global min_radius
     global max_radius
+    global poisson_scale
 
     if(not np.any(np.asarray(pcd.points))):
         return
-    # downTmp = pcd.remove_duplicated_points()
-    down = pcd.voxel_down_sample(voxel_size=voxelDownsampling)
+    downTmp = pcd.remove_duplicated_points()
+    downTmp = downTmp.remove_statistical_outlier(nb_neighbors=30, std_ratio=1, print_progress=False)[0]
+    down = downTmp.voxel_down_sample(voxel_size=voxelDownsampling)
     down.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=point_radius, max_nn=point_neighbors))
     
     if(method == 'ball'):
@@ -53,8 +56,8 @@ def pointCloudMesh():
         mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_ball_pivoting(down,o3d.utility.DoubleVector(radius))
     elif(method == 'poisson'):
         # down.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=30))
-        # mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(down, depth=poisson_depth, width=0, scale=1.1, linear_fit=poisson_linear_fit)[0]
-        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(down, depth=poisson_depth)[0]
+        mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(down, depth=poisson_depth, scale=poisson_scale)[0]
+        # mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(down, depth=poisson_depth)[0]
     elif(method == 'alpha'):
         mesh = o3d.geometry.TriangleMesh.create_from_point_cloud_alpha_shape(down, alpha)
     
@@ -140,6 +143,7 @@ def get_param():
     global poisson_depth
     global min_radius
     global max_radius
+    global poisson_scale
   
     # if(request.json.get("poissonLinearFit") == 'true'): poisson_linear_fit = True 
     # else: poisson_linear_fit = False 
@@ -151,6 +155,7 @@ def get_param():
     poisson_depth = int(request.json.get("poissonDepth"))
     max_radius = float(request.json.get("maxRadius"))
     min_radius = float(request.json.get("minRadius"))
+    poisson_scale = float(request.json.get("poissonScale"))
     
     pointCloudMesh()
     return request.json

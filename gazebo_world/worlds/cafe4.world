@@ -87,15 +87,15 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <state world_name='default'>
-      <sim_time>412 565000000</sim_time>
-      <real_time>22 639788815</real_time>
-      <wall_time>1687296904 241142345</wall_time>
-      <iterations>22234</iterations>
+      <sim_time>554 824000000</sim_time>
+      <real_time>151 773386677</real_time>
+      <wall_time>1687377809 421077964</wall_time>
+      <iterations>142259</iterations>
       <model name='cafe'>
-        <pose>0 0 -0.2 0 -0 0</pose>
+        <pose>0 1.41972 -0.097084 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>0 0 -0.2 0 -0 0</pose>
+          <pose>0 1.41972 -0.097084 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -112,32 +112,32 @@
         </link>
       </model>
       <model name='vehicle'>
-        <pose>-0.004816 0.015012 0.553473 -8.9e-05 -1.6e-05 -5.1e-05</pose>
+        <pose>0 0 0.646188 -8.9e-05 -1.5e-05 -0.077289</pose>
         <scale>1 1 1</scale>
         <model name='velodyne_hdl-32'>
-          <pose>-0.00552 0.018821 1.10799 -8.9e-05 -1.6e-05 -5.1e-05</pose>
+          <pose>-0.000407 0.003852 1.2007 -8.9e-05 -1.5e-05 -0.077289</pose>
           <scale>1 1 1</scale>
           <link name='base'>
-            <pose>-0.005521 0.018824 1.13732 -8.9e-05 -1.6e-05 -5.1e-05</pose>
-            <velocity>1e-06 -4e-06 6.4e-05 4e-06 1e-06 0</velocity>
-            <acceleration>1.9e-05 -0.000103 1e-06 9e-05 1.7e-05 0</acceleration>
-            <wrench>2.3e-05 -0.000123 1e-06 0 -0 0</wrench>
+            <pose>-0.000407 0.003855 1.23004 -8.9e-05 -1.5e-05 -0.077289</pose>
+            <velocity>0 -0 6.4e-05 0 -0 0</velocity>
+            <acceleration>0 -0 -0 0 -0 0</acceleration>
+            <wrench>0 -0 -0 0 -0 0</wrench>
           </link>
           <link name='top'>
-            <pose>-0.005522 0.01883 1.20344 8.5e-05 3.2e-05 2.9676</pose>
-            <velocity>1e-06 -5e-06 6.4e-05 -7.8e-05 0.000445 -1.28319</velocity>
-            <acceleration>2e-05 -0.000109 1e-06 9.4e-05 -1e-06 0</acceleration>
-            <wrench>2e-06 -1.1e-05 0 0 -0 0</wrench>
+            <pose>-0.000408 0.003861 1.29616 5.2e-05 -7.4e-05 -2.09812</pose>
+            <velocity>0 -0 6.4e-05 -4.7e-05 0.000449 -1.28319</velocity>
+            <acceleration>0 -0 -0 0 -0 0</acceleration>
+            <wrench>0 -0 -0 0 -0 0</wrench>
           </link>
         </model>
         <model name='wood_cube_10cm'>
-          <pose>-0.00411 0.0112 0 0 -0 0</pose>
+          <pose>0.000425 -0.004074 0.445545 1e-06 2e-06 0</pose>
           <scale>1 1 1</scale>
           <link name='link'>
-            <pose>-0.004113 0.011207 0.048958 -8.9e-05 -1.6e-05 -5.1e-05</pose>
-            <velocity>0 -0 6.4e-05 4e-06 1e-06 0</velocity>
-            <acceleration>4.1e-05 -0.000191 0.064322 0.003812 0.000814 -0</acceleration>
-            <wrench>2.1e-05 -9.8e-05 0.033235 0 -0 0</wrench>
+            <pose>0.000407 -0.003848 0.141673 -8.9e-05 -1.5e-05 -0.077289</pose>
+            <velocity>0 -0 6.4e-05 0 -0 0</velocity>
+            <acceleration>1e-06 -8e-06 0.064322 0.000154 1.7e-05 0</acceleration>
+            <wrench>0 -4e-06 0.033235 0 -0 0</wrench>
           </link>
         </model>
       </model>
@@ -147,7 +147,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>1.06067 -4.51839 5.01128 0 0.779643 1.76819</pose>
+        <pose>10.8241 -5.35848 16.5428 0 0.783643 2.36019</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>

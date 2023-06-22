@@ -313,8 +313,9 @@ void calculate_points(gazebo::msgs::LaserScan scan) {
   // std::vector<ignition::math::Quaternion<double>> ray_quat;
 
   // double min_angle = pi - scan.angle_max();
-  double max_angle = pi - scan.angle_min();
-  double pitchangle = max_angle;
+  // double max_angle = pi - scan.angle_min();
+  // double pitchangle = max_angle;
+  double pitchangle = scan.angle_min();
 
   for(unsigned int i=0;i<scan.ranges_size();i++) {
     double r = scan.ranges(i);
@@ -331,6 +332,11 @@ void calculate_points(gazebo::msgs::LaserScan scan) {
     std::string st_x = std::to_string(pos.X()+position.x());
     std::string st_y = std::to_string(pos.Y()+position.y());
     std::string st_z = std::to_string(pos.Z()+position.z());
+
+    // std::string st_x = std::to_string(pos.X());
+    // std::string st_y = std::to_string(pos.Y());
+    // std::string st_z = std::to_string(pos.Z());
+
     if(!isinf(pos.X()) && !isnan(pos.X())) {
       
       points_coordinates += st_x + "\t" + st_y + "\t" + st_z + "\n";
@@ -344,7 +350,7 @@ void calculate_points(gazebo::msgs::LaserScan scan) {
       json_data += "{\"x\": " + st_x + ", \"y\": " + st_y + ", \"z\": " + st_z + "},";
     }
 
-    pitchangle -= scan.angle_step();
+    pitchangle += scan.angle_step();
   }
 
   // points_coordinates += "\n\n";

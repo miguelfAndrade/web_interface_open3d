@@ -21,14 +21,14 @@ let poissonDepthLabel = document.getElementById('poissonDepthLabel');
 let minRadiusLabel = document.getElementById('minRadiusLabel');
 let maxRadiusLabel = document.getElementById('maxRadiusLabel');
 // let poissonWidthLabel = document.getElementById('poissonWidthLabel');
-// let poissonScaleLabel = document.getElementById('poissonScaleLabel');
+let poissonScaleLabel = document.getElementById('poissonScaleLabel');
 
 let voxelSlider = document.getElementById('voxelSlider');
 let methodDropdown = document.getElementById('method');
 let alphaValue = document.getElementById('alphaValue');
 let poissonDepthValue = document.getElementById('poissonDepth');
 // let poissonWidthValue = document.getElementById('poissonWidth');
-// let poissonScaleValue = document.getElementById('poissonScale');
+let poissonScaleValue = document.getElementById('poissonScale');
 // let poissonLinearFitValue = document.getElementById('poissonLinearFit');
 let pointNeighborsValue = document.getElementById('pointNeighborsValue');
 let pointRadiusValue = document.getElementById('pointRadiusValue');
@@ -40,7 +40,7 @@ let voxelDownsampling;
 let pointNeighbors;
 let pointRadius;
 let poissonDepth;
-let poissonWidth;
+// let poissonWidth;
 let poissonScale;
 // let poissonLinearFit;
 let alpha;
@@ -54,8 +54,8 @@ window.onload = function() {
 	pointNeighbors = pointNeighborsValue.value;
 	pointRadius = pointRadiusValue.value/10;
 	poissonDepth = poissonDepthValue.value;
-	poissonWidth = 0;
-	poissonScale = 0;
+	// poissonWidth = 0;
+	poissonScale = poissonScaleValue.value/10;
 	// poissonLinearFit = poissonLinearFitValue.checked.toString();
 	alpha = alphaValue.value/100;
 	minRadius = minRadiusValue.value/100;
@@ -69,6 +69,7 @@ window.onload = function() {
 	poissonDepthLabel.innerHTML = poissonDepth;
 	maxRadiusLabel.innerHTML = maxRadius;
 	minRadiusLabel.innerHTML = minRadius;
+	poissonScaleLabel.innerHTML = poissonScale;
 
 
 	divPoissonParams.style.display = 'none';
@@ -199,6 +200,10 @@ poissonDepthValue.oninput = function() {
 	poissonDepth = this.value;
 }
 
+poissonScaleValue.oninput = function() {
+	poissonScaleLabel.innerHTML = this.value/10;
+	poissonScale = this.value/10;
+}
 
 maxRadiusValue.oninput = function() {
 	maxRadiusLabel.innerHTML = this.value/100;
@@ -229,7 +234,6 @@ async function sendParametersData() {
 		pointNeighbors: pointNeighbors,
 		pointRadius: pointRadius,
 		poissonDepth: poissonDepth,
-		poissonWidth: poissonWidth,
 		poissonScale: poissonScale,
 		alpha: alpha,
 		minRadius: minRadius,
