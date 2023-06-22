@@ -7,9 +7,6 @@ views = Blueprint(__name__, "views")
 filename = "models/ex.gltf"
 
 # For changing the parameters use global variables for save the info
-
-maxChunksPoints = 96
-maxPointsCounter = 0
 pcd = o3d.geometry.PointCloud()
 points = []
 
@@ -65,7 +62,7 @@ def pointCloudMesh():
     mesh.paint_uniform_color([0.85,0.24,0.28])
     # o3d.visualization.draw_geometries([mesh])
     # o3d.io.write_triangle_mesh("models/ex.obj", mesh)
-    o3d.io.write_point_cloud("models/teste.xyz", down)
+    # o3d.io.write_point_cloud("models/teste.xyz", down)
     o3d.io.write_triangle_mesh(filename, mesh)
 
 @views.route("/")
@@ -116,19 +113,9 @@ def get_points():
         # print(np_points)
 
     pcdTemp.points = o3d.utility.Vector3dVector(np_points)
-    # pcdClean = pcdTemp.remove_non_finite_points(True, True)
     pcd = pcdTemp.remove_duplicated_points()
-    # pcd = pcdClean
-    # print(np.asarray(pcdClean.points))
     pointCloudMesh()
-    # if(maxPointsCounter > maxChunksPoints):
-    #     pcdTemp.points = o3d.utility.Vector3dVector(np_points)
-    #     # pcdClean = pcdTemp.remove_non_finite_points(True, True)
-    #     pcd = pcdTemp.remove_duplicated_points()
-    #     # pcd = pcdClean
-    #     # print(np.asarray(pcdClean.points))
-    #     pointCloudMesh()
-    #     maxPointsCounter = 0
+    
 
     
     return args
@@ -137,7 +124,6 @@ def get_points():
 def get_param():
     global method
     global alpha
-    # global poisson_linear_fit
     global point_neighbors
     global point_radius
     global poisson_depth
@@ -145,9 +131,6 @@ def get_param():
     global max_radius
     global poisson_scale
   
-    # if(request.json.get("poissonLinearFit") == 'true'): poisson_linear_fit = True 
-    # else: poisson_linear_fit = False 
-
     method = request.json.get("method")
     alpha = float(request.json.get("alpha"))
     point_neighbors = int(request.json.get("pointNeighbors"))

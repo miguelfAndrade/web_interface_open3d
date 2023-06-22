@@ -19,7 +19,7 @@
 #include <curl/curl.h>
 
 std::string points_coordinates = "";
-std::string jsonPointsString = "";
+// std::string jsonPointsString = "";
 std::string json_data = "[";
 
 int c = 0;
@@ -121,21 +121,18 @@ namespace gazebo
     /// \param[in] _msg Repurpose a vector3 message. This function will
     /// only use the x component.
     private: void OnRanges(ConstLaserScanStampedPtr &_msg)
-    {    
-      // std::string::iterator itr;
+    {
+      
       gazebo::msgs::LaserScan scan = _msg->scan();
-      // calculate_points(scan);
       std::async(calculate_points, scan);
       
       if(c > max_c) {
-        // itr = json_data.end() - 1;
         json_data.erase(json_data.end()-1);
         json_data += "]";
-        // sendPoints(json_data);
         std::async(sendPoints, json_data);
         std::cout << json_data << std::endl;
         json_data = "[";
-        c = 0;
+        c = -1;
       }
       c++;
       // std::string json_data = "[";
@@ -308,63 +305,37 @@ void calculate_points(gazebo::msgs::LaserScan scan) {
   //Laser scanner orientation from reference frame (in quaternions)
   gazebo::msgs::Quaternion laser_orientation_ = world_data.orientation();
   ignition::math::Quaternion laser_orientation =  ignition::math::Quaternion(laser_orientation_.w(), laser_orientation_.x(), laser_orientation_.y(), laser_orientation_.z());
-  
-  //get quaternion for each ray (assuming a single vertical column of rays) @sensor frame
-  // std::vector<ignition::math::Quaternion<double>> ray_quat;
+  double yaw = laser_orientation.Yaw();
+  ignition::math::Quaternion<double> yawQ = ignition::math::Quaternion<double>::EulerToQuaternion(0, 0, yaw);
 
-  // double min_angle = pi - scan.angle_max();
-  // double max_angle = pi - scan.angle_min();
-  // double pitchangle = max_angle;
   double pitchangle = scan.angle_min();
 
   for(unsigned int i=0;i<scan.ranges_size();i++) {
     double r = scan.ranges(i);
-    double yaw = laser_orientation.Yaw();
-    ignition::math::Quaternion<double> yawT = ignition::math::Quaternion<double>::EulerToQuaternion(0, 0, yaw);
     
     double x = r*cos(pitchangle);
     double y = 0;
     double z = r*sin(pitchangle);
      
     ignition::math::Vector3<double> pos(x,y,z);
-    pos = yawT.RotateVector(pos);
+    pos = yawQ.RotateVector(pos);
 
     std::string st_x = std::to_string(pos.X()+position.x());
     std::string st_y = std::to_string(pos.Y()+position.y());
     std::string st_z = std::to_string(pos.Z()+position.z());
 
-    // std::string st_x = std::to_string(pos.X());
-    // std::string st_y = std::to_string(pos.Y());
-    // std::string st_z = std::to_string(pos.Z());
-
     if(!isinf(pos.X()) && !isnan(pos.X())) {
       
       points_coordinates += st_x + "\t" + st_y + "\t" + st_z + "\n";
-      
-      // if(i == scan.ranges_size()-1) {
-      //   json_data += "{\"x\": " + st_x + ", \"y\": " + st_y + ", \"z\": " + st_z + "}";
-      // }
-      // else {
-      //   json_data += "{\"x\": " + st_x + ", \"y\": " + st_y + ", \"z\": " + st_z + "},";
-      // }
+
       json_data += "{\"x\": " + st_x + ", \"y\": " + st_y + ", \"z\": " + st_z + "},";
     }
 
     pitchangle += scan.angle_step();
   }
 
-  // points_coordinates += "\n\n";
-  // json_data += "]";
-  // sendPoints(json_data);
-  // std::async(sendPoints, json_data);
-  jsonPointsString += json_data;
-
-  std::ofstream pointCloud;
-  pointCloud.open("../sensor_data/sensor_data.xyz"); //open is the method of ofstream
-  pointCloud << points_coordinates;
-  pointCloud.close();
-  // std::ofstream jsonPoints;
-  // jsonPoints.open("../sensor_data/json_data.txt"); //open is the method of ofstream
-  // jsonPoints << jsonPointsString;
-  // jsonPoints.close();
+  // std::ofstream pointCloud;
+  // pointCloud.open("../sensor_data/sensor_data.xyz"); //open is the method of ofstream
+  // pointCloud << points_coordinates;
+  // pointCloud.close();
 }
