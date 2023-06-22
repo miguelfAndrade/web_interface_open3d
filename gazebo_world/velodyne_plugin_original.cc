@@ -122,7 +122,7 @@ namespace gazebo
     /// only use the x component.
     private: void OnRanges(ConstLaserScanStampedPtr &_msg)
     {
-      
+
       gazebo::msgs::LaserScan scan = _msg->scan();
       std::async(calculate_points, scan);
       
@@ -130,7 +130,7 @@ namespace gazebo
         json_data.erase(json_data.end()-1);
         json_data += "]";
         std::async(sendPoints, json_data);
-        std::cout << json_data << std::endl;
+        // std::cout << json_data << std::endl;
         json_data = "[";
         c = -1;
       }

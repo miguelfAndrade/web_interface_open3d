@@ -86,8 +86,6 @@ def profile():
 
 @views.route("/points", methods = ['POST'])
 def get_points():
-    global maxChunksPoints
-    global maxPointsCounter
     global pcd
     global points
     # global np_points
@@ -108,7 +106,6 @@ def get_points():
         points.append([x, y, z])
         # print(points)
 
-        maxPointsCounter = maxPointsCounter + 1
         np_points = np.array(points)
         # print(np_points)
 
